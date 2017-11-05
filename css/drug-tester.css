@@ -7,3 +7,20 @@
 .red-border {
     border: 1px solid red;
 }
+
+.btn:focus {
+    background-color: yellow;
+    color: black;
+}
+
+.bold {
+    font-weight: 700;
+}
+
+.padding-right {
+    padding: 0 15px 0 0;
+}
+
+.normal-font-size {
+    font-weight: 500;
+}

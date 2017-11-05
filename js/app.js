@@ -3,8 +3,12 @@ var rows = undefined;
 var cols = undefined;
 var hideList = undefined;
 var skipList = undefined;
+// defaults to true since radio is defaulted to "On"
+var autoAnswerEnabled = true;
+// previous state of autoAnswerEnabled
+var oldAnswerEnabled = true;
 
-function start_app(event) {
+function startApp(event) {
     // convert input string of column numbers to int
     hideList = ($('#hide').val() === '') ? [] : $('#hide').val().split(",").map(function(x) {
         return parseInt(x, 10) - 1;
@@ -136,13 +140,37 @@ function addShowHideButton(idToAppendTo, row) {
 
     $('<div/>', {
         class: 'btn btn-primary',
+        id: `button-${row}`,
         type: 'button',
+        tabindex: "0",
         'data-toggle': 'collapse',
         'data-target': `#collapse-${row}`,
         'aria-expanded': 'false',
         'aria-controls': `#collapse-${row}`,
         text: '+'
     }).appendTo(`#td-button-${row}`);
+
+    // // allow user to hit enter to trigger button
+    // $(`#td-button-${row}`).keypress(function(event) {
+    //     // 13 == enter key
+    //     if (event.which == 13) {
+    //         $(`#button-${row}`).click();
+    //     }
+    //     console.log(event.which);
+    // });
+
+    // if "On"
+    if (autoAnswerEnabled) {
+        // simulate button click when user tabs over the button div and if user
+        // tabs again it will close the button div sinde its another key event
+        $(`#td-button-${row}`).on('keyup keydown', function(e) {
+            // 9 == tab key
+            if (e.which == 9) {
+                $(`#button-${row}`).click();
+                console.log('inside');
+            }
+        });
+    }
 }
 
 // add an invisble row to the table that will only show when ShowHideButton is clicked
@@ -206,4 +234,32 @@ function shuffle(array) {
     }
 
     return array;
+}
+
+// toggles auto answers on and off depending on user's selection
+function toggleAutoAnswer(myRadio) {
+    // converts to boolean
+    autoAnswerEnabled = (myRadio.value == 'true')
+
+    // if user has loaded an csv file and the new option is not the same as the old option
+    if (csvData !== undefined && oldAnswerEnabled !== autoAnswerEnabled) {
+        oldAnswerEnabled = autoAnswerEnabled;
+
+        if (autoAnswerEnabled) {
+            for (i = 1; i < rows; i++) {
+                // needs to be in closure so each onclick get its own "i", or else they all share the same.
+                (function (i) {
+                    $(`#td-button-${i}`).on('keyup keydown', function(e) {
+                        if (e.which == 9) {
+                            $(`#button-${i}`).click().bind(i);
+                        }
+                    })
+                })(i);
+            }
+        } else {
+            for (i = 1; i < rows; i++) {
+                $(`#td-button-${i}`).off('keyup keydown');
+            }
+        }
+    }
 }
