@@ -143,10 +143,15 @@ function addShowHideButton(idToAppendTo, row) {
         id: `button-${row}`,
         type: 'button',
         tabindex: "0",
-        'data-toggle': 'collapse',
-        'data-target': `#collapse-${row}`,
-        'aria-expanded': 'false',
-        'aria-controls': `#collapse-${row}`,
+        // old bootstrap rules for collapsible
+        // 'data-toggle': 'collapse',
+        // 'data-target': `#collapse-${row}`,
+        // 'aria-expanded': 'false',
+        // 'aria-controls': `#collapse-${row}`,
+        click: function() {
+            $(`#collapse-${row}`).toggleClass("display-show");
+            $(`#collapse-${row}`).toggleClass("display-hide");
+        },
         text: '+'
     }).appendTo(`#td-button-${row}`);
 
@@ -167,7 +172,6 @@ function addShowHideButton(idToAppendTo, row) {
             // 9 == tab key
             if (e.which == 9) {
                 $(`#button-${row}`).click();
-                console.log('inside');
             }
         });
     }
@@ -177,7 +181,8 @@ function addShowHideButton(idToAppendTo, row) {
 // <tr class="collapse" id="collapseExample"></tr>
 function addCollapsedRow(idToAppendTo, row) {
     $('<tr/>', {
-        class: 'collapse red-border',
+        // class: 'collapse red-border',
+        class: 'red-border display-hide',
         id: `collapse-${row}`
     }).appendTo(idToAppendTo);
 
@@ -186,7 +191,7 @@ function addCollapsedRow(idToAppendTo, row) {
         // check if we should show this column when constructing our test
         if (hideList.indexOf(i) === -1) {
             $('<td/>', {
-                id: `collapse-${row}`,
+                id: `td-collapse-${row}`,
                 text: csvData[row][i]
             }).appendTo(`#collapse-${row}`);
         }

@@ -24,3 +24,11 @@
 .normal-font-size {
     font-weight: 500;
 }
+
+.display-show {
+    display: table-row;
+}
+
+.display-hide {
+    display: none;
+}
